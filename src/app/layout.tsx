@@ -21,7 +21,7 @@ export default function RootLayout({
           <Header style={{ display: 'flex', alignItems: 'center', backgroundColor: '#fff', boxShadow: '0 5px 5px rgba(0,0,0,.1)' }}>
             <Title level={5}>App title</Title>
           </Header>
-          <Content style={{ padding: '1rem 6rem' }}>
+          <Content className="main-wrapper">
             {children}
           </Content>
         </Layout>

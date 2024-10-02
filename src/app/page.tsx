@@ -11,9 +11,9 @@ export default async function Home(): Promise<ReactElement> {
   return (
     <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
       <Flex gap={24} vertical>
-        <Flex gap="small" align="center" justify="space-between">
+        <Flex align="center" justify="space-between" wrap>
           <Title level={5}>Page title</Title>
-          <Flex gap="large" wrap>
+          <Flex gap="middle" wrap>
             <Button icon={<DownloadOutlined />} size="large" iconPosition="end">
               Export to PDF
             </Button>
