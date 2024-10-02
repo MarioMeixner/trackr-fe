@@ -23,7 +23,7 @@ export default async function Home(): Promise<ReactElement> {
             <Badge color="blue" count={10} overflowCount={9}>
               <Button
                 icon={[
-                  <FilterOutlined />
+                  <FilterOutlined key="filter-icon" />
                 ]}
                 size="large"
                 iconPosition="end"

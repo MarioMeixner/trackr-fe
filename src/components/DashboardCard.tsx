@@ -4,15 +4,16 @@ import { ReactElement } from "react";
 import { Avatar, Button, Card, Col, Divider, Flex, Row, Typography } from "antd";
 import { CommentOutlined, UserOutlined } from "@ant-design/icons";
 import { Column, Pie } from "@ant-design/charts";
+import { CaseRecord, ChartData, PayloadData } from "@/types";
 
 const { Text } = Typography;
 
 export default function DashboardCard({
   chartData,
 }: {
-  chartData: any,
+  chartData: PayloadData,
 }): ReactElement {
-  const data = chartData.results.map((item: any) => ({ type: item.date, value: item.metric_value }));
+  const data = chartData.results?.map((item: CaseRecord) => ({ type: item.date, value: item.metric_value } as ChartData));
 
   const pieConfig = {
     data,
@@ -51,8 +52,8 @@ export default function DashboardCard({
     xField: 'type',
     yField: 'value',
     label: {
-      text: (originData: any) => {
-        const val = parseFloat(originData.value);
+      text: (originData: ChartData) => {
+        const val = parseFloat(originData.value as string);
         if (val < 0.05) {
           return (val * 100).toFixed(1) + '%';
         }
