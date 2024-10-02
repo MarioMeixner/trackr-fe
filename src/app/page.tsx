@@ -1,95 +1,41 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { ReactElement, Suspense } from "react";
+import { Button, Flex, Spin } from "antd";
+import { AlignLeftOutlined, DownloadOutlined, FilterOutlined, LoadingOutlined } from "@ant-design/icons";
+import Title from "antd/es/typography/Title";
+import Text from "antd/es/typography/Text";
+import DashboardCard from "@/components/DashboardCard";
 
-export default function Home() {
+export default async function Home(): Promise<ReactElement> {
+  let data = await fetch('https://api.ukhsa-dashboard.data.gov.uk/themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/England/metrics/COVID-19_testing_PCRcountByDay');
+  let chartData = await data.json();
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+    <Suspense fallback={<Spin indicator={<LoadingOutlined spin />} />}>
+      <Flex gap={24} vertical>
+        <Flex gap="small" align="center" justify="space-between">
+          <Title level={5}>Page title</Title>
+          <Flex gap="large" wrap>
+            <Button icon={<DownloadOutlined />} size="large" iconPosition="end">
+              Export to PDF
+            </Button>
+            <Button icon={<AlignLeftOutlined />} size="large" iconPosition="end">
+              Notes <Text type="secondary">(3)</Text>
+            </Button>
+            <Button
+              icon={[
+                <FilterOutlined />
+              ]}
+              size="large"
+              iconPosition="end"
+              >
+              <Button type="primary" shape="circle" size="small">
+                9+
+              </Button>
+              Filter
+            </Button>
+          </Flex>
+        </Flex>
+        <DashboardCard chartData={chartData} />
+      </Flex>
+    </Suspense>
   );
 }
