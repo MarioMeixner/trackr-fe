@@ -1,12 +1,14 @@
-import type { Metadata } from "next";
-import { Layout } from "antd";
-import { Content, Header } from "antd/es/layout/layout";
-import Title from "antd/es/typography/Title";
-import "./globals.css";
+import type { Metadata } from 'next';
+import { Layout } from 'antd';
+import { Content } from 'antd/es/layout/layout';
+import Header from '@/components/Header';
+import { NextAuthProvider } from './provider';
+import './globals.css';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: "App title",
-  description: "App title description",
+  title: 'Impoch',
+  description: 'Lightweight time managing and reporting tool',
 };
 
 export default function RootLayout({
@@ -17,14 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Layout style={{ minHeight: '100vh' }}>
-          <Header style={{ display: 'flex', alignItems: 'center', backgroundColor: '#fff', boxShadow: '0 5px 5px rgba(0,0,0,.1)' }}>
-            <Title level={5}>App title</Title>
-          </Header>
-          <Content className="main-wrapper">
-            {children}
-          </Content>
-        </Layout>
+        <NextAuthProvider>
+          <Layout style={{ minHeight: '100vh' }}>
+            <Header />
+            <Content className="main-wrapper">{children}</Content>
+            <Footer />
+          </Layout>
+        </NextAuthProvider>
       </body>
     </html>
   );

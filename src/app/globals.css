@@ -24,6 +24,6 @@ a {
 .main-wrapper {
   padding: 1rem 1rem !important;
   @media only screen and (min-width: 600px) {
-    padding: 1rem 6rem !important;
+    padding: 3rem 6rem !important;
   }
 }

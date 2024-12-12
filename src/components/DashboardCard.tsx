@@ -1,19 +1,31 @@
 'use client';
 
-import { ReactElement } from "react";
-import { Avatar, Button, Card, Col, Divider, Flex, Row, Typography } from "antd";
-import { CommentOutlined, UserOutlined } from "@ant-design/icons";
-import { Column, Pie } from "@ant-design/charts";
-import { CaseRecord, ChartData, PayloadData } from "@/types";
+import { ReactElement } from 'react';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Flex,
+  Row,
+  Typography,
+} from 'antd';
+import { CommentOutlined, UserOutlined } from '@ant-design/icons';
+import { Column, Pie } from '@ant-design/charts';
+import { CaseRecord, ChartData, PayloadData } from '@/types';
 
 const { Text } = Typography;
 
 export default function DashboardCard({
   chartData,
 }: {
-  chartData: PayloadData,
+  chartData: PayloadData;
 }): ReactElement {
-  const data = chartData.results?.map((item: CaseRecord) => ({ type: item.date, value: item.metric_value } as ChartData));
+  const data = chartData.results?.map(
+    (item: CaseRecord) =>
+      ({ type: item.date, value: item.metric_value }) as ChartData
+  );
 
   const pieConfig = {
     data,
@@ -65,10 +77,8 @@ export default function DashboardCard({
 
   return (
     <Row gutter={[24, 16]}>
-      <Col md={24} lg={12}>      
-        <Card
-          title="Chart title"
-        >
+      <Col md={24} lg={12}>
+        <Card title="Chart title">
           <div>
             <Column {...columnConfig} height={300} />
             <Divider />
@@ -83,9 +93,7 @@ export default function DashboardCard({
         </Card>
       </Col>
       <Col md={24} lg={12}>
-        <Card
-          title="Chart title"
-          >
+        <Card title="Chart title">
           <Pie {...pieConfig} height={300} />
           <Divider />
           <Flex justify="space-between">
