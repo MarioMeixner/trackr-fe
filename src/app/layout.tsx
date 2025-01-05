@@ -7,7 +7,7 @@ import './globals.css';
 import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Impoch',
+  title: 'Trackr',
   description: 'Lightweight time managing and reporting tool',
 };
 

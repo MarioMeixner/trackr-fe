@@ -29,3 +29,16 @@ export type PayloadData = {
   previous?: string;
   results?: Array<CaseRecord>;
 };
+
+export type DataType = {
+  key: string;
+  date: string;
+  title: string;
+  time: number;
+};
+
+export type Issue = {
+  title: string;
+  date: string;
+  time: string;
+};

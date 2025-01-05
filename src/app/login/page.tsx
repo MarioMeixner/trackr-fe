@@ -10,7 +10,7 @@ export default function Login(): ReactElement {
     <Suspense>
       <Flex justify="center" gap={50}>
         <Flex vertical style={{ width: '27rem' }}>
-          <Title level={1}>Impoch</Title>
+          <Title level={1}>trackr</Title>
           <Text
             type="secondary"
             style={{ fontSize: '1.25em', marginBottom: '1.25rem' }}

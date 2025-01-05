@@ -8,7 +8,7 @@ export default function UserInfo({
 }): ReactElement {
   return (
     <Text style={{ fontSize: '1.25em' }}>
-      Hey <b>{username}</b>! 👋
+      Welcome <b>{username}</b>! 👋
     </Text>
   );
 }

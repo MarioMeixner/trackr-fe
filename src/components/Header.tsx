@@ -2,10 +2,11 @@
 
 import { ReactElement } from 'react';
 import { Header as AppHeader } from 'antd/es/layout/layout';
-import Title from 'antd/es/typography/Title';
 import { signOut, useSession } from 'next-auth/react';
 import { Button } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
+import logo from '@/assets/logo.svg';
+import Image from 'next/image';
 
 export default function Header(): ReactElement {
   const { data: user } = useSession();
@@ -19,10 +20,9 @@ export default function Header(): ReactElement {
         alignItems: 'center',
         justifyContent: 'space-between',
         backgroundColor: '#fff',
-        boxShadow: '0 5px 5px rgba(0,0,0,.1)',
       }}
     >
-      <Title level={5}>Impoch</Title>
+      <Image src={logo} alt="trackr" width="100" />
       {pathname !== '/login' && !user ? (
         <Button
           variant="link"
