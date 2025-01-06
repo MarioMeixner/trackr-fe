@@ -106,7 +106,6 @@ export default function Clock(): ReactElement {
     name: string
   ) => {
     form.setFieldValue(name, datetime);
-    console.log(datetime, datetimeString, name);
   };
 
   const handleSubmit = async (values: FormData) => {

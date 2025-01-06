@@ -96,7 +96,7 @@ export default function TicketTable({ data }: { data: Track[] }): ReactElement {
         setEditingKey('');
       }
     } catch (errInfo) {
-      console.log('Validate Failed:', errInfo);
+      console.error('Validate Failed:', errInfo);
     }
   };
 

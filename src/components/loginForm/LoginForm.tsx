@@ -26,19 +26,17 @@ export default function LoginForm(): ReactElement {
         callbackUrl,
       });
 
-      console.log(res);
-
       if (!res?.error) {
         router.push(callbackUrl);
       } else {
-        console.log('Invalid email or password');
+        console.error('Invalid email or password');
       }
     } catch (error: unknown) {
       console.error(error as string);
     }
   };
 
-  const onFinishFailed = () => console.log('Finish failed');
+  const onFinishFailed = () => console.error('Finish failed');
 
   return (
     <Flex>
