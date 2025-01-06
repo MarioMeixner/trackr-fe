@@ -16,8 +16,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
     GithubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID_LOCAL as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET_LOCAL as string,
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
     }),
     // CredentialsProvider({}), // Include a Credentials provider (username/password)
   ],
