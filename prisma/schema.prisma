@@ -25,6 +25,8 @@ model Track {
   id          String   @id @default(cuid())
   title       String
   date        DateTime @default(now()) @db.Timestamp(6)
+  startTime   String?
+  endTime     String?
   duration    String
   description String?
   author      User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)

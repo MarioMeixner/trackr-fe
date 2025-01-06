@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 export async function createTrack(formData: string) {
   const data = JSON.parse(formData);
@@ -17,6 +18,7 @@ export async function createTrack(formData: string) {
     },
   });
   revalidatePath('/timer');
+  redirect('/timer');
 }
 
 export async function editTrack(formData: FormData, id: string) {
@@ -32,8 +34,12 @@ export async function editTrack(formData: FormData, id: string) {
       },
     },
   });
+  revalidatePath('/timer');
+  redirect('/timer');
 }
 
 export async function deleteTrack(id: string) {
   await prisma.track?.delete({ where: { id } });
+  revalidatePath('/timer');
+  redirect('/timer');
 }

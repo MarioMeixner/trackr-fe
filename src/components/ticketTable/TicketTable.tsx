@@ -1,11 +1,13 @@
 'use client';
 
+import { deleteTrack } from '@/lib/actions';
 import { Track } from '@/types';
 import {
   Flex,
   Form,
   Input,
   InputNumber,
+  message,
   Popconfirm,
   Table,
   TableProps,
@@ -37,6 +39,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     <td {...restProps}>
       {editing ? (
         <Form.Item
+          key={dataIndex}
           name={dataIndex}
           style={{ margin: 0 }}
           rules={[
@@ -59,6 +62,7 @@ export default function TicketTable({ data }: { data: Track[] }): ReactElement {
   const [form] = Form.useForm();
   const [tracks, setTracks] = useState<Track[]>(data);
   const [editingKey, setEditingKey] = useState('');
+  const [messageApi] = message.useMessage();
 
   const isEditing = (record: Track) => record.id === editingKey;
 
@@ -67,9 +71,12 @@ export default function TicketTable({ data }: { data: Track[] }): ReactElement {
     setEditingKey(record.id as string);
   };
 
-  const handleDelete = (id: string) => {
-    const newData = data.filter((i) => i.id !== id);
-    setTracks(newData);
+  const handleDelete = async (id: string) => {
+    await deleteTrack(id);
+    messageApi.open({
+      type: 'success',
+      content: 'Work logged successfully',
+    });
   };
 
   const cancel = () => {
@@ -182,6 +189,7 @@ export default function TicketTable({ data }: { data: Track[] }): ReactElement {
   return (
     <Form form={form} component={false}>
       <Table<Track>
+        rowKey={(record) => record.id}
         components={{
           body: { cell: EditableCell },
         }}

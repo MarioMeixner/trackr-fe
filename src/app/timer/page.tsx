@@ -1,12 +1,16 @@
+import { ReactElement } from 'react';
 import Clock from '@/components/clock/Clock';
 import TicketTable from '@/components/ticketTable/TicketTable';
 import { prisma } from '@/lib/prisma';
 import { Flex } from 'antd';
 import Title from 'antd/es/typography/Title';
-import { ReactElement } from 'react';
+import { today } from '@/constants';
 
 export default async function Timer(): Promise<ReactElement> {
-  const tracks = await prisma.track?.findMany();
+  const { start, end } = today();
+  const tracks = await prisma.track?.findMany({
+    where: { date: { gte: start, lte: end } },
+  });
   return (
     <>
       <Title level={2}>Time tracker</Title>

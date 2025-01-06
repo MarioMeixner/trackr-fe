@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, {
   ReactElement,
   useEffect,
@@ -16,17 +16,22 @@ import {
   Input,
   message,
   Popconfirm,
+  TimePicker,
   Tooltip,
 } from 'antd';
 import { useStopwatch } from 'react-timer-hook';
-import { CaretDownOutlined, PauseCircleOutlined } from '@ant-design/icons';
-import { PlayCircleOutlined } from '@ant-design/icons';
+import {
+  CaretDownOutlined,
+  ClockCircleOutlined,
+  PauseCircleOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
 import dayjs from 'dayjs';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import '@/app/variables.module.scss';
 import IconButton from '../iconButton/IconButton';
-import { createTrack } from '@/actions/actions';
+import { createTrack } from '@/lib/actions';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(useGSAP);
@@ -44,17 +49,8 @@ export default function Clock(): ReactElement {
   useGSAP(() => {
     gsap.fromTo(
       clock.current,
-      {
-        y: -100,
-        opacity: 0,
-      },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1,
-        ease: 'bounce.out',
-        yoyo: true,
-      }
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: 'bounce.out', yoyo: true }
     );
   });
 
@@ -66,11 +62,16 @@ export default function Clock(): ReactElement {
   }, [hours, minutes, seconds]);
 
   useEffect(() => {
-    form.setFieldValue('duration', `${hours}h:${minutes}m`);
-  }, [hours, minutes]);
+    if (form) {
+      const formattedMinutes = minutes === 0 ? '0' : minutes;
+      form.setFieldsValue({
+        duration: `${hours}h${formattedMinutes}m`,
+      });
+    }
+  }, [hours, minutes, form]);
 
   const showForm = () => {
-    setOpen(true);
+    setOpen(!open);
     if (open) {
       gsap.to(sectionRef.current, {
         height: 0,
@@ -89,11 +90,7 @@ export default function Clock(): ReactElement {
         padding: '10px 20px',
       });
     }
-    gsap.to('.icon-button', {
-      rotation: '+=180',
-      duration: 0.3,
-    });
-    setOpen(!open);
+    gsap.to('.icon-button', { rotation: '+=180', duration: 0.3 });
   };
 
   const handleDelete = (): void => {
@@ -105,7 +102,26 @@ export default function Clock(): ReactElement {
     datetimeString: string | string[],
     name: string
   ) => {
-    form.setFieldValue(name, datetime);
+    form.setFieldsValue({ [name]: datetime });
+  };
+
+  const onChangeRange = (dateStrings: [string, string]) => {
+    const [start, end] = dateStrings;
+
+    const toMinutes = (time: string) => {
+      const [hours, minutes] = time.split(':').map(Number);
+      return hours * 60 + minutes;
+    };
+
+    const startMinutes = toMinutes(start);
+    const endMinutes = toMinutes(end);
+    const difference = Math.abs(endMinutes - startMinutes);
+    const hours = Math.floor(difference / 60);
+    const minutes = difference % 60 === 0 ? '0' : difference % 60;
+
+    form.setFieldValue('startTime', start);
+    form.setFieldValue('endTime', end);
+    form.setFieldValue('duration', `${hours}h:${minutes}m`);
   };
 
   const handleSubmit = async (values: FormData) => {
@@ -124,12 +140,7 @@ export default function Clock(): ReactElement {
     <div style={{ position: 'relative' }}>
       {contextHolder}
       <Flex align="center" vertical gap="0.5rem">
-        <div
-          style={{
-            fontSize: '100px',
-          }}
-          ref={clock}
-        >
+        <div style={{ fontSize: '100px' }} ref={clock}>
           {formatedTime}
         </div>
         <Flex vertical gap="1rem">
@@ -140,17 +151,11 @@ export default function Clock(): ReactElement {
           </Flex>
           <Flex
             ref={sectionRef}
-            style={{
-              height: 0,
-              overflow: 'hidden',
-              opacity: 0,
-            }}
+            style={{ height: 0, overflow: 'hidden', opacity: 0 }}
           >
             <Form
-              initialValues={{
-                date: dayjs(),
-              }}
               form={form}
+              initialValues={{ date: dayjs() }}
               onFinish={handleSubmit}
             >
               <Form.Item
@@ -171,41 +176,44 @@ export default function Clock(): ReactElement {
                   <DatePicker
                     format="DD.MM.YYYY"
                     variant="filled"
-                    onChange={(
-                      date: dayjs.Dayjs,
-                      dateString: string | string[]
-                    ) => onChangeDatetime(date, dateString, 'date')}
+                    onChange={(date) => onChangeDatetime(date!, '', 'date')}
                     style={{ width: '10rem' }}
                   />
                 </Form.Item>
-                <Form.Item
-                  name="duration"
-                  rules={[
-                    { required: true, message: 'Please input duration!' },
-                  ]}
-                >
-                  <Input placeholder="Duration" variant="filled" />
+                <Form.Item name="timeRange">
+                  <TimePicker.RangePicker
+                    placeholder={['Start time', 'End time']}
+                    variant="filled"
+                    format="HH:mm"
+                    minuteStep={15}
+                    onChange={(_, dateStrings) =>
+                      onChangeRange(dateStrings as [string, string])
+                    }
+                  />
+                </Form.Item>
+              </Flex>
+              <Flex>
+                <Form.Item name="duration">
+                  <Input
+                    placeholder="Duration"
+                    variant="filled"
+                    suffix={<ClockCircleOutlined />}
+                  />
                 </Form.Item>
               </Flex>
               <Form.Item name="description">
-                <Input variant="filled" placeholder="Description of issue" />
+                <Input placeholder="Description of issue" variant="filled" />
               </Form.Item>
               <Flex gap="0.5rem" justify="flex-end">
-                <Form.Item label={null}>
-                  <Button type="primary" htmlType="submit">
-                    Log
-                  </Button>
-                </Form.Item>
-                <Form.Item label={null}>
-                  <Popconfirm
-                    title="Sure to delete?"
-                    onConfirm={() => handleDelete()}
-                  >
-                    <Button onClick={pause} variant="outlined" color="danger">
-                      Discard
-                    </Button>
-                  </Popconfirm>
-                </Form.Item>
+                <Button type="primary" htmlType="submit">
+                  Log
+                </Button>
+                <Popconfirm
+                  title="Sure to delete?"
+                  onConfirm={() => handleDelete()}
+                >
+                  <Button danger>Discard</Button>
+                </Popconfirm>
               </Flex>
             </Form>
           </Flex>
