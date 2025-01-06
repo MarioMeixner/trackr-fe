@@ -13,6 +13,7 @@
     "@ant-design/charts": "^2.2.1",
     "@ant-design/icons": "^5.5.1",
     "@gsap/react": "^2.1.1",
+    "@prisma/client": "6.1.0",
     "antd": "^5.21.2",
     "dayjs": "^1.11.13",
     "gsap": "^3.12.5",
@@ -32,6 +33,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.4.2",
+    "prisma": "^6.1.0",
     "sass": "^1.83.0",
     "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0"

@@ -25,7 +25,8 @@ import dayjs from 'dayjs';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import '@/app/variables.module.scss';
-import IconButton from './iconButton/IconButton';
+import IconButton from '../iconButton/IconButton';
+import { createTrack } from '@/actions/actions';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(useGSAP);
@@ -108,11 +109,12 @@ export default function Clock(): ReactElement {
     console.log(datetime, datetimeString, name);
   };
 
-  const onSubmit = () => {
-    form.resetFields();
+  const handleSubmit = async (values: FormData) => {
     showForm();
     reset();
     pause();
+    await createTrack(JSON.stringify(values));
+    form.resetFields();
     messageApi.open({
       type: 'success',
       content: 'Work logged successfully',
@@ -148,11 +150,9 @@ export default function Clock(): ReactElement {
             <Form
               initialValues={{
                 date: dayjs(),
-                // duration: form.getFieldValue('duration'),
-                duration: `${hours}h:${minutes}m`,
               }}
               form={form}
-              onFinish={onSubmit}
+              onFinish={handleSubmit}
             >
               <Form.Item
                 name="title"

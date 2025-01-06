@@ -1,6 +1,6 @@
 'use client';
 
-import { DataType } from '@/types';
+import { Track } from '@/types';
 import {
   Flex,
   Form,
@@ -11,6 +11,7 @@ import {
   TableProps,
   Typography,
 } from 'antd';
+import dayjs from 'dayjs';
 import { ReactElement, useState } from 'react';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
@@ -18,7 +19,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   dataIndex: string;
   title: string;
   inputType: 'number' | 'text';
-  record: DataType;
+  record: Track;
   index: number;
 }
 
@@ -54,65 +55,44 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 };
 
-const originData: DataType[] = [
-  {
-    key: '1',
-    date: '1.1.2024',
-    title: '#123',
-    time: 1123,
-  },
-  {
-    key: '2',
-    date: '2.1.2024',
-    title: '#321',
-    time: 123123,
-  },
-  {
-    key: '3',
-    date: '3.1.2024',
-    title: '#1212',
-    time: 12312,
-  },
-];
-
-export default function TicketTable(): ReactElement {
+export default function TicketTable({ data }: { data: Track[] }): ReactElement {
   const [form] = Form.useForm();
-  const [data, setData] = useState<DataType[]>(originData);
+  const [tracks, setTracks] = useState<Track[]>(data);
   const [editingKey, setEditingKey] = useState('');
 
-  const isEditing = (record: DataType) => record.key === editingKey;
+  const isEditing = (record: Track) => record.id === editingKey;
 
-  const edit = (record: Partial<DataType> & { key: string }) => {
+  const edit = (record: Partial<Track> & { id: string }) => {
     form.setFieldsValue({ name: '', age: '', address: '', ...record });
-    setEditingKey(record.key as string);
+    setEditingKey(record.id as string);
   };
 
-  const handleDelete = (key: string) => {
-    const newData = data.filter((i) => i.key !== key);
-    setData(newData);
+  const handleDelete = (id: string) => {
+    const newData = data.filter((i) => i.id !== id);
+    setTracks(newData);
   };
 
   const cancel = () => {
     setEditingKey('');
   };
 
-  const save = async (key: React.Key) => {
+  const save = async (id: string) => {
     try {
-      const row = (await form.validateFields()) as DataType;
+      const row = (await form.validateFields()) as Track;
 
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
+      const newData = [...tracks];
+      const index = newData.findIndex((item) => id === item.id);
       if (index > -1) {
         const item = newData[index];
         newData.splice(index, 1, {
           ...item,
           ...row,
         });
-        setData(newData);
+        setTracks(newData);
         setEditingKey('');
       } else {
         newData.push(row);
-        setData(newData);
+        setTracks(newData);
         setEditingKey('');
       }
     } catch (errInfo) {
@@ -127,6 +107,9 @@ export default function TicketTable(): ReactElement {
       key: 'date',
       width: '15%',
       editable: true,
+      render: (_: unknown, record: Track) => {
+        return <span>{dayjs(record.date).format('DD.MM.YYYY')}</span>;
+      },
     },
     {
       title: 'Title',
@@ -137,8 +120,8 @@ export default function TicketTable(): ReactElement {
     },
     {
       title: 'Spent time',
-      dataIndex: 'time',
-      key: 'time',
+      dataIndex: 'duration',
+      key: 'duration',
       width: '25%',
       editable: true,
     },
@@ -146,12 +129,12 @@ export default function TicketTable(): ReactElement {
       title: 'Action',
       dataIndex: 'action',
       width: '20%',
-      render: (_: unknown, record: DataType) => {
+      render: (_: unknown, record: Track) => {
         const editable = isEditing(record);
         return editable ? (
           <span>
             <Typography.Link
-              onClick={() => save(record.key)}
+              onClick={() => save(record.id)}
               style={{ marginInlineEnd: 8 }}
             >
               Save
@@ -169,7 +152,7 @@ export default function TicketTable(): ReactElement {
               Edit
             </Typography.Link>
             <Typography.Link
-              onClick={() => handleDelete(record.key)}
+              onClick={() => handleDelete(record.id)}
               type="danger"
             >
               Delete
@@ -180,13 +163,13 @@ export default function TicketTable(): ReactElement {
     },
   ];
 
-  const mergedColumns: TableProps<DataType>['columns'] = columns.map((col) => {
+  const mergedColumns: TableProps<Track>['columns'] = columns.map((col) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: Track) => ({
         record,
         inputType: col.dataIndex === 'time' ? 'number' : 'text',
         dataIndex: col.dataIndex,
@@ -198,12 +181,12 @@ export default function TicketTable(): ReactElement {
 
   return (
     <Form form={form} component={false}>
-      <Table<DataType>
+      <Table<Track>
         components={{
           body: { cell: EditableCell },
         }}
         bordered
-        dataSource={data}
+        dataSource={tracks}
         columns={mergedColumns}
         rowClassName="editable-row"
         pagination={{ onChange: cancel }}

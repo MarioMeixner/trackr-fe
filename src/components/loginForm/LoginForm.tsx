@@ -6,6 +6,7 @@ import { Button, Checkbox, Flex, Form, Input } from 'antd';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import google from '@/assets/google.png';
+import github from '@/assets/github.svg';
 import Text from 'antd/es/typography/Text';
 
 export default function LoginForm(): ReactElement {
@@ -42,10 +43,16 @@ export default function LoginForm(): ReactElement {
   return (
     <Flex>
       <Flex vertical style={{ width: '16rem' }}>
-        <Button onClick={() => signIn('google', { callbackUrl })}>
-          <Image src={google} alt="google-logo" width={16} height={16} />
-          Sign in with Google
-        </Button>
+        <Flex gap="1rem" vertical>
+          <Button onClick={() => signIn('google', { callbackUrl })}>
+            <Image src={google} alt="google-logo" width={16} height={16} />
+            Sign in with Google
+          </Button>
+          <Button onClick={() => signIn('github', { callbackUrl })}>
+            <Image src={github} alt="github-logo" width={16} height={16} />
+            Sign in with Github
+          </Button>
+        </Flex>
         <Text
           type="secondary"
           style={{ textAlign: 'center', margin: '0.5rem 0' }}

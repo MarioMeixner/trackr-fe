@@ -7,8 +7,8 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import Text from 'antd/es/typography/Text';
-import DashboardCard from '@/components/DashboardCard';
-import UserInfo from '@/components/UserInfo';
+import DashboardCard from '@/components/dashboardCard/DashboardCard';
+import UserInfo from '@/components/userInfo/UserInfo';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 

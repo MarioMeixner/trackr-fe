@@ -42,3 +42,18 @@ export type Issue = {
   date: string;
   time: string;
 };
+
+export type Track = {
+  id: string;
+  title: string;
+  date: Date;
+  duration: string;
+  description: string | null;
+};
+
+export type FormData = {
+  date: Date;
+  duration: string;
+  title: string;
+  description: string;
+};

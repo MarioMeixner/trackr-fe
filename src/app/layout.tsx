@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
-import Header from '@/components/Header';
+import Header from '@/components/header/Header';
 import { NextAuthProvider } from './provider';
 import './globals.css';
-import Footer from '@/components/Footer';
+import Footer from '@/components/footer/Footer';
 
 export const metadata: Metadata = {
   title: 'Trackr',

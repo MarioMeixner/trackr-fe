@@ -1,7 +1,7 @@
 import { ReactElement, Suspense } from 'react';
 import { Flex } from 'antd';
 import Title from 'antd/es/typography/Title';
-import LoginForm from '@/components/LoginForm';
+import LoginForm from '@/components/loginForm/LoginForm';
 import Text from 'antd/es/typography/Text';
 import Link from 'antd/es/typography/Link';
 
