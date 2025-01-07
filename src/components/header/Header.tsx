@@ -8,29 +8,39 @@ import { usePathname, useRouter } from 'next/navigation';
 import logo from '@/assets/logo.svg';
 import Image from 'next/image';
 import Link from 'next/link';
-import { DownOutlined, RollbackOutlined } from '@ant-design/icons';
-
-const handleMenuClick: MenuProps['onClick'] = () => {
-  signOut();
-};
-
-const items: MenuProps['items'] = [
-  {
-    key: '1',
-    label: 'Sign out',
-    icon: <RollbackOutlined />,
-  },
-];
-
-const menuProps = {
-  items,
-  onClick: handleMenuClick,
-};
+import {
+  ClockCircleOutlined,
+  DownOutlined,
+  RollbackOutlined,
+} from '@ant-design/icons';
 
 export default function Header(): ReactElement<void> {
   const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
+
+  const handleTimerClick: MenuProps['onClick'] = () => {
+    router.push('/timer');
+  };
+
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: 'Timer',
+      icon: <ClockCircleOutlined />,
+      onClick: handleTimerClick,
+    },
+    {
+      key: '2',
+      label: 'Sign out',
+      icon: <RollbackOutlined />,
+      onClick: signOut as MenuProps['onClick'],
+    },
+  ];
+
+  const menuProps = {
+    items,
+  };
 
   return (
     <AppHeader
