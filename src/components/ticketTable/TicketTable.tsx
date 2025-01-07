@@ -58,7 +58,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 };
 
-export default function TicketTable({ data }: { data: Track[] }): ReactElement {
+export default function TicketTable({
+  data,
+}: {
+  data: Track[];
+}): ReactElement<Track[]> {
   const [form] = Form.useForm();
   const [tracks, setTracks] = useState<Track[]>(data);
   const [editingKey, setEditingKey] = useState('');

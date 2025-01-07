@@ -5,9 +5,9 @@ export default function IconButton({
   children,
   onClick,
 }: {
-  children: ReactElement;
+  children: ReactElement<void>;
   onClick: () => void;
-}): ReactElement {
+}): ReactElement<void> {
   return (
     <button onClick={onClick} className="icon-button">
       {children}

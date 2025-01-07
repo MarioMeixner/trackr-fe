@@ -9,7 +9,7 @@ import google from '@/assets/google.png';
 import github from '@/assets/github.svg';
 import Text from 'antd/es/typography/Text';
 
-export default function LoginForm(): ReactElement {
+export default function LoginForm(): ReactElement<void> {
   const searchParams = useSearchParams();
   const router = useRouter();
   const callbackUrl = searchParams.get('callbackUrl') || '/';

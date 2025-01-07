@@ -12,7 +12,7 @@ import UserInfo from '@/components/userInfo/UserInfo';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-export default async function Home(): Promise<ReactElement> {
+export default async function Home(): Promise<ReactElement<void>> {
   const data = await fetch(
     'https://api.ukhsa-dashboard.data.gov.uk/themes/infectious_disease/sub_themes/respiratory/topics/COVID-19/geography_types/Nation/geographies/England/metrics/COVID-19_testing_PCRcountByDay'
   );

@@ -5,7 +5,7 @@ import LoginForm from '@/components/loginForm/LoginForm';
 import Text from 'antd/es/typography/Text';
 import Link from 'antd/es/typography/Link';
 
-export default function Login(): ReactElement {
+export default function Login(): ReactElement<void> {
   return (
     <Suspense>
       <Flex justify="center" gap={50}>

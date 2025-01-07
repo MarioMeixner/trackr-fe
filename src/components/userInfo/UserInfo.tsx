@@ -5,7 +5,7 @@ export default function UserInfo({
   username,
 }: {
   username: string;
-}): ReactElement {
+}): ReactElement<string> {
   return (
     <Text style={{ fontSize: '1.25em' }}>
       Welcome <b>{username}</b>! 👋

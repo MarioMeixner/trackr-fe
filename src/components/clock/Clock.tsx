@@ -37,14 +37,14 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(useGSAP);
 }
 
-export default function Clock(): ReactElement {
+export default function Clock(): ReactElement<void> {
   const { seconds, minutes, hours, start, pause, reset, isRunning } =
     useStopwatch();
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [messageApi, contextHolder] = message.useMessage();
-  const sectionRef = useRef<HTMLElement | any>(null);
-  const clock = useRef<HTMLElement | any>();
+  const sectionRef = useRef<HTMLElement | any>(undefined);
+  const clock = useRef<HTMLElement | any>(undefined);
 
   useGSAP(() => {
     gsap.fromTo(

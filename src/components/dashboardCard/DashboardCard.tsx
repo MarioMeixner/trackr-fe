@@ -21,10 +21,13 @@ export default function DashboardCard({
   chartData,
 }: {
   chartData: PayloadData;
-}): ReactElement {
+}): ReactElement<PayloadData> {
   const data = chartData.results?.map(
     (item: CaseRecord) =>
-      ({ type: item.date, value: item.metric_value }) as ChartData
+      ({
+        type: item.date,
+        value: item.metric_value,
+      }) as ChartData
   );
 
   const pieConfig = {

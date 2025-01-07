@@ -6,7 +6,7 @@ import { Flex } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { today } from '@/constants';
 
-export default async function Timer(): Promise<ReactElement> {
+export default async function Timer(): Promise<ReactElement<void>> {
   const { start, end } = today();
   const tracks = await prisma.track?.findMany({
     where: { date: { gte: start, lte: end } },
