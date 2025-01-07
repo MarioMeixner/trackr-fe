@@ -31,7 +31,7 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import '@/app/variables.module.scss';
 import IconButton from '../iconButton/IconButton';
-import { createTrack } from '@/lib/actions';
+import { mutate } from 'swr';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(useGSAP);
@@ -128,8 +128,19 @@ export default function Clock(): ReactElement<void> {
     showForm();
     reset();
     pause();
-    await createTrack(JSON.stringify(values));
+    const response = await fetch('/api/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values),
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      throw new Error(responseData.message || 'Failed to create todo');
+    }
     form.resetFields();
+    mutate('/api/track');
     messageApi.open({
       type: 'success',
       content: 'Work logged successfully',

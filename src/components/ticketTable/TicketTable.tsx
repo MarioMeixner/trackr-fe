@@ -1,7 +1,7 @@
 'use client';
 
-import { deleteTrack } from '@/lib/actions';
 import { Track } from '@/types';
+import { LoadingOutlined } from '@ant-design/icons';
 import {
   Flex,
   Form,
@@ -9,12 +9,14 @@ import {
   InputNumber,
   message,
   Popconfirm,
+  Spin,
   Table,
   TableProps,
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement, useState } from 'react';
+import useSWR, { mutate } from 'swr';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -58,13 +60,15 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 };
 
-export default function TicketTable({
-  data,
-}: {
-  data: Track[];
-}): ReactElement<Track[]> {
+const fetcher = (
+  ...args: Parameters<typeof fetch>
+): Promise<{ tracks: Track[] }> => fetch(...args).then((res) => res.json());
+
+export default function TicketTable(): ReactElement<Track[]> {
+  const { data: { tracks: tracksData } = {}, isLoading: getTracksLoading } =
+    useSWR<{ tracks: Track[] }>('/api/track', fetcher);
   const [form] = Form.useForm();
-  const [tracks, setTracks] = useState<Track[]>(data);
+  const [tracks, setTracks] = useState<Track[]>(tracksData || []);
   const [editingKey, setEditingKey] = useState('');
   const [messageApi] = message.useMessage();
 
@@ -76,7 +80,20 @@ export default function TicketTable({
   };
 
   const handleDelete = async (id: string) => {
-    await deleteTrack(id);
+    const res = await fetch('/api/track', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete track');
+    }
+
+    message.success('Track deleted successfully');
+    mutate('/api/track');
     messageApi.open({
       type: 'success',
       content: 'Work logged successfully',
@@ -190,6 +207,10 @@ export default function TicketTable({
     };
   });
 
+  if (getTracksLoading) {
+    return <Spin indicator={<LoadingOutlined spin />} />;
+  }
+
   return (
     <Form form={form} component={false}>
       <Table<Track>
@@ -198,7 +219,7 @@ export default function TicketTable({
           body: { cell: EditableCell },
         }}
         bordered
-        dataSource={tracks}
+        dataSource={tracksData}
         columns={mergedColumns}
         rowClassName="editable-row"
         pagination={{ onChange: cancel }}

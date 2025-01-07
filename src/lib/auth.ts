@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
+import { JWT } from 'next-auth/jwt';
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -21,4 +22,13 @@ export const authOptions: NextAuthOptions = {
     }),
     // CredentialsProvider({}), // Include a Credentials provider (username/password)
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    async session({ session, token }) {
+      session.user = token as JWT;
+      return session;
+    },
+  },
 };

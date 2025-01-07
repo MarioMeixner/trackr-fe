@@ -3,13 +3,32 @@
 import { ReactElement } from 'react';
 import { Header as AppHeader } from 'antd/es/layout/layout';
 import { signOut, useSession } from 'next-auth/react';
-import { Button } from 'antd';
+import { Button, Dropdown, MenuProps, Space } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
 import logo from '@/assets/logo.svg';
 import Image from 'next/image';
+import Link from 'next/link';
+import { DownOutlined, RollbackOutlined } from '@ant-design/icons';
+
+const handleMenuClick: MenuProps['onClick'] = () => {
+  signOut();
+};
+
+const items: MenuProps['items'] = [
+  {
+    key: '1',
+    label: 'Sign out',
+    icon: <RollbackOutlined />,
+  },
+];
+
+const menuProps = {
+  items,
+  onClick: handleMenuClick,
+};
 
 export default function Header(): ReactElement<void> {
-  const { data: user } = useSession();
+  const { data: session } = useSession();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -22,8 +41,10 @@ export default function Header(): ReactElement<void> {
         backgroundColor: '#fff',
       }}
     >
-      <Image src={logo} alt="trackr" width="100" />
-      {pathname !== '/login' && !user ? (
+      <Link style={{ display: 'flex', alignItems: 'center' }} href="/">
+        <Image src={logo} alt="trackr" width="100" />
+      </Link>
+      {pathname !== '/login' && !session ? (
         <Button
           variant="link"
           color="default"
@@ -31,14 +52,15 @@ export default function Header(): ReactElement<void> {
         >
           Sign in
         </Button>
-      ) : user ? (
-        <Button
-          variant="link"
-          color="default"
-          onClick={() => signOut({ callbackUrl: '/login' })}
-        >
-          Sign out
-        </Button>
+      ) : session ? (
+        <Dropdown menu={menuProps} trigger={['click']}>
+          <Button type="text">
+            <Space>
+              {session.user?.email}
+              <DownOutlined />
+            </Space>
+          </Button>
+        </Dropdown>
       ) : null}
     </AppHeader>
   );
