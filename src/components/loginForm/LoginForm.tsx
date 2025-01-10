@@ -43,7 +43,7 @@ export default function LoginForm(): ReactElement<void> {
       });
 
       if (!res?.error) {
-        push(callbackUrl);
+        window.location.href = callbackUrl;
         if (invalidCredentials) {
           setInvalidCredentials(false);
         }
