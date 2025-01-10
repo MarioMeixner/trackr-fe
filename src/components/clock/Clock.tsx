@@ -14,7 +14,7 @@ import {
   Flex,
   Form,
   Input,
-  message,
+  notification,
   Popconfirm,
   TimePicker,
   Tooltip,
@@ -42,7 +42,7 @@ export default function Clock(): ReactElement<void> {
     useStopwatch();
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
+  const [notificationApi, contextHolder] = notification.useNotification();
   const sectionRef = useRef<HTMLElement | any>(undefined);
   const clock = useRef<HTMLElement | any>(undefined);
 
@@ -141,9 +141,9 @@ export default function Clock(): ReactElement<void> {
     }
     form.resetFields();
     mutate('/api/track');
-    messageApi.open({
-      type: 'success',
-      content: 'Work logged successfully',
+    notificationApi.success({
+      message: 'Work logged successfully',
+      placement: 'bottomRight',
     });
   };
 

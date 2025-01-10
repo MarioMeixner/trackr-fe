@@ -1,22 +1,20 @@
 'use client';
 
 import { Track } from '@/types';
-import { LoadingOutlined } from '@ant-design/icons';
 import {
   Flex,
   Form,
   Input,
   InputNumber,
-  message,
+  notification,
   Popconfirm,
-  Spin,
   Table,
   TableProps,
   Typography,
 } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement, useState } from 'react';
-import useSWR, { mutate } from 'swr';
+import { mutate } from 'swr';
 
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
   editing: boolean;
@@ -60,17 +58,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   );
 };
 
-const fetcher = (
-  ...args: Parameters<typeof fetch>
-): Promise<{ tracks: Track[] }> => fetch(...args).then((res) => res.json());
-
-export default function TicketTable(): ReactElement<Track[]> {
-  const { data: { tracks: tracksData } = {}, isLoading: getTracksLoading } =
-    useSWR<{ tracks: Track[] }>('/api/track', fetcher);
+export default function TicketTable({
+  data,
+}: {
+  data?: Track[];
+}): ReactElement<Track[]> {
   const [form] = Form.useForm();
-  const [tracks, setTracks] = useState<Track[]>(tracksData || []);
   const [editingKey, setEditingKey] = useState('');
-  const [messageApi] = message.useMessage();
+  const [notificationApi, contextHolder] = notification.useNotification();
 
   const isEditing = (record: Track) => record.id === editingKey;
 
@@ -92,11 +87,10 @@ export default function TicketTable(): ReactElement<Track[]> {
       throw new Error('Failed to delete track');
     }
 
-    message.success('Track deleted successfully');
     mutate('/api/track');
-    messageApi.open({
-      type: 'success',
-      content: 'Work logged successfully',
+    notificationApi.success({
+      message: 'Track deleted successfully',
+      placement: 'bottomRight',
     });
   };
 
@@ -108,7 +102,7 @@ export default function TicketTable(): ReactElement<Track[]> {
     try {
       const row = (await form.validateFields()) as Track;
 
-      const newData = [...tracks];
+      const newData = [...(data ?? [])];
       const index = newData.findIndex((item) => id === item.id);
       if (index > -1) {
         const item = newData[index];
@@ -116,11 +110,9 @@ export default function TicketTable(): ReactElement<Track[]> {
           ...item,
           ...row,
         });
-        setTracks(newData);
         setEditingKey('');
       } else {
         newData.push(row);
-        setTracks(newData);
         setEditingKey('');
       }
     } catch (errInfo) {
@@ -207,10 +199,6 @@ export default function TicketTable(): ReactElement<Track[]> {
     };
   });
 
-  if (getTracksLoading) {
-    return <Spin indicator={<LoadingOutlined spin />} />;
-  }
-
   return (
     <Form form={form} component={false}>
       <Table<Track>
@@ -219,12 +207,13 @@ export default function TicketTable(): ReactElement<Track[]> {
           body: { cell: EditableCell },
         }}
         bordered
-        dataSource={tracksData}
+        dataSource={data}
         columns={mergedColumns}
         rowClassName="editable-row"
         pagination={{ onChange: cancel }}
         style={{ width: '60rem' }}
       />
+      {contextHolder}
     </Form>
   );
 }

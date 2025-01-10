@@ -2,10 +2,17 @@ import { ReactElement, Suspense } from 'react';
 import { Flex } from 'antd';
 import Title from 'antd/es/typography/Title';
 import LoginForm from '@/components/loginForm/LoginForm';
+import RegisterForm from '@/components/RegisterForm';
 import Text from 'antd/es/typography/Text';
 import Link from 'antd/es/typography/Link';
+import { FormEnum } from '@/constants';
 
-export default function Login(): ReactElement<void> {
+export default function Auth({
+  searchParams,
+}: {
+  searchParams?: { [_: string]: string };
+}): ReactElement<void> {
+  const isSignup = searchParams?.form === FormEnum.signUp;
   return (
     <Suspense>
       <Flex justify="center" gap={50}>
@@ -24,8 +31,8 @@ export default function Login(): ReactElement<void> {
           <Link href="/">Learn more</Link>
         </Flex>
         <Flex gap={12} vertical>
-          <Title level={4}>Sign in</Title>
-          <LoginForm />
+          <Title level={4}>{isSignup ? 'Register' : 'Sign in'}</Title>
+          {isSignup ? <RegisterForm /> : <LoginForm />}
         </Flex>
       </Flex>
     </Suspense>

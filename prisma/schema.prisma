@@ -15,10 +15,11 @@ datasource db {
 }
 
 model User {
-  id     String  @id @default(cuid())
-  email  String  @unique
-  name   String?
-  tracks Track[]
+  id       String  @id @default(cuid())
+  email    String  @unique
+  password String
+  name     String?
+  tracks   Track[]
 }
 
 model Track {

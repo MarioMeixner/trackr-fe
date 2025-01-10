@@ -54,7 +54,7 @@ export default function Header(): ReactElement<void> {
       <Link style={{ display: 'flex', alignItems: 'center' }} href="/">
         <Image src={logo} alt="trackr" width="100" />
       </Link>
-      {pathname !== '/login' && !session ? (
+      {pathname !== '/auth' && !session ? (
         <Button
           variant="link"
           color="default"

@@ -81,7 +81,7 @@ export default function DashboardCard({
   return (
     <Row gutter={[24, 16]}>
       <Col md={24} lg={12}>
-        <Card title="Chart title">
+        <Card title="Attendance 🏢">
           <div>
             <Column {...columnConfig} height={300} />
             <Divider />
@@ -96,7 +96,7 @@ export default function DashboardCard({
         </Card>
       </Col>
       <Col md={24} lg={12}>
-        <Card title="Chart title">
+        <Card title="Coding time 👨‍💻">
           <Pie {...pieConfig} height={300} />
           <Divider />
           <Flex justify="space-between">

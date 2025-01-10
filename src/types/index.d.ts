@@ -1,3 +1,8 @@
+export type Error = {
+  message: string;
+  status: number;
+};
+
 export type ChartData = {
   type: string;
   value: number | string;
