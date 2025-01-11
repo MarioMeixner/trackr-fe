@@ -5,6 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import { sql } from '@vercel/postgres';
 import bcrypt from 'bcrypt';
+import { prisma } from './prisma';
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -22,6 +23,7 @@ export const authOptions: NextAuthOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
       clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+      authorization: { params: { scope: 'read:user user:email' } },
     }),
     CredentialsProvider({
       name: 'Credentials',
@@ -58,6 +60,28 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google' || account?.provider === 'github') {
+        try {
+          const existingUser = await prisma.user.findUnique({
+            where: { email: profile?.email },
+          });
+
+          if (!existingUser) {
+            await prisma.user.create({
+              data: {
+                email: profile?.email as string,
+                name: profile?.name ?? '',
+              },
+            });
+          }
+        } catch (error) {
+          console.error('Error in signIn callback:', error);
+          return true;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       return {
         ...token,

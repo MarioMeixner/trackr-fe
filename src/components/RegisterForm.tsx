@@ -82,7 +82,6 @@ export default function RegisterForm(): ReactElement<void> {
       <Flex vertical style={{ width: '16rem' }}>
         <Form
           name="basic"
-          initialValues={{ remember: true }}
           onFinish={onSubmit}
           onFinishFailed={onFinishFailed}
           autoComplete="off"

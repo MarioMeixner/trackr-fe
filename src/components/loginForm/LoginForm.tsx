@@ -2,7 +2,7 @@
 
 import { ReactElement, useState } from 'react';
 import Image from 'next/image';
-import { Alert, Button, Checkbox, Flex, Form, Input } from 'antd';
+import { Alert, Button, Flex, Form, Input } from 'antd';
 import { signIn } from 'next-auth/react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import google from '@/assets/google.png';
@@ -30,7 +30,6 @@ export default function LoginForm(): ReactElement<void> {
   const onFinish = async (values: {
     email: string;
     password: string;
-    remember: string;
   }): Promise<void> => {
     try {
       setIsLogging(true);
@@ -38,7 +37,6 @@ export default function LoginForm(): ReactElement<void> {
         redirect: false,
         email: values.email,
         password: values.password,
-        remember: values.remember,
         callbackUrl,
       });
 
@@ -85,7 +83,6 @@ export default function LoginForm(): ReactElement<void> {
         </Text>
         <Form
           name="basic"
-          initialValues={{ remember: true }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
@@ -104,9 +101,6 @@ export default function LoginForm(): ReactElement<void> {
           </Form.Item>
           <Form.Item name="password" rules={[rule]}>
             <Input.Password placeholder="Password" />
-          </Form.Item>
-          <Form.Item name="remember" valuePropName="checked" label={null}>
-            <Checkbox>Remember me</Checkbox>
           </Form.Item>
           <Form.Item label={null}>
             <Flex gap="0.725rem" vertical>
