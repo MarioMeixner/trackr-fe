@@ -4,8 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
     const { start, end } = today();
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -16,7 +17,9 @@ export async function GET() {
 
     const tracks = await prisma.track.findMany({
       where: {
-        date: { gte: start, lte: end },
+        ...(searchParams.get('query') === 'today' && {
+          date: { gte: start, lte: end },
+        }),
         author: { email: userEmail as string },
       },
     });
