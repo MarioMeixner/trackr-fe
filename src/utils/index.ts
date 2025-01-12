@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Error as ErrorType } from '@/types';
 
-export const fetcher = async <T>(url: string): Promise<T> => {
-  const res = await fetch(url);
+export const fetcher = async <T>(url: string, queryParams = ''): Promise<T> => {
+  const res = await fetch(`${url}${queryParams}`);
 
   if (!res.ok) {
     const error: ErrorType = {
