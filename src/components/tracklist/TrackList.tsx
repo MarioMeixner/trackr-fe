@@ -2,41 +2,21 @@
 
 import { ReactElement } from 'react';
 import ErrorBoundary from '../ErrorBoundary';
-import TicketTable from './table/TicketTable';
+import TicketTable from './table/TrackTable';
 import useSWR from 'swr';
-import { Track } from '@prisma/client';
-import { Button, Flex, Spin } from 'antd';
+import { Flex, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import { fetcher } from '@/utils';
-import { usePathname, useRouter } from 'next/navigation';
+import { Track } from '@/types';
 
-export default function TrackList({
-  searchParams,
-}: {
-  searchParams?: { [_: string]: string };
-}): ReactElement {
-  const pathname = usePathname();
-  const { replace } = useRouter();
-  const url = searchParams?.query
-    ? `/api/track?query=${searchParams?.query}`
-    : 'api/track';
+export default function TrackList(): ReactElement {
   const {
     data: { tracks } = {},
     isLoading: getTracksLoading,
     error,
   } = useSWR<{
     tracks: Track[];
-  }>(url, fetcher);
-
-  const handleSearch = (query: string): void => {
-    const params = new URLSearchParams(searchParams);
-    if (query) {
-      params.set('query', query);
-    } else {
-      params.delete('query');
-    }
-    replace(`${pathname}?${params.toString()}`);
-  };
+  }>('/api/track', fetcher);
 
   if (getTracksLoading) {
     return <Spin indicator={<LoadingOutlined spin />} />;
@@ -45,14 +25,6 @@ export default function TrackList({
   return (
     <Flex gap="0.5rem" align="flex-start" vertical>
       <ErrorBoundary errorStatus={error?.status as number}>
-        <Flex gap="0.5rem">
-          <Button type="primary" onClick={() => handleSearch('all')}>
-            All
-          </Button>
-          <Button type="link" onClick={() => handleSearch('today')}>
-            Today
-          </Button>
-        </Flex>
         <TicketTable data={tracks} />
       </ErrorBoundary>
     </Flex>

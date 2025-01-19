@@ -4,9 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
     const { start, end } = today();
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -17,9 +16,7 @@ export async function GET(req: NextRequest) {
 
     const tracks = await prisma.track.findMany({
       where: {
-        ...(searchParams.get('query') === 'today' && {
-          date: { gte: start, lte: end },
-        }),
+        date: { gte: start, lte: end },
         author: { email: userEmail as string },
       },
     });
@@ -52,6 +49,38 @@ export async function POST(request: NextRequest) {
             email: userEmail as string,
           },
         },
+      },
+    });
+
+    return NextResponse.json(body, { status: 201 });
+  } catch (error) {
+    console.error('Error adding todo:', error);
+    return NextResponse.json(
+      { message: 'An unexpected error occurred' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    await prisma.track?.update({
+      where: {
+        id: body.id as string,
+      },
+      data: {
+        title: body.title,
+        description: body.description,
+        date: body.date,
+        duration: body.duration,
+        startTime: body.startTime,
+        endTime: body.endTime,
       },
     });
 

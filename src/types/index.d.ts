@@ -51,7 +51,7 @@ export type Issue = {
 export type Track = {
   id: string;
   title: string;
-  date: Date;
+  date: Date | undefined;
   duration: string;
   description: string | null;
 };

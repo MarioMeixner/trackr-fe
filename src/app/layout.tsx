@@ -2,9 +2,10 @@ import type { Metadata } from 'next';
 import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Header from '@/components/header/Header';
-import { NextAuthProvider } from './provider';
+import { NextAuthProvider } from '../providers/NextAuthProvider';
 import './globals.css';
 import Footer from '@/components/footer/Footer';
+import { ReduxProvider } from '@/providers/ReduxProvider';
 
 export const metadata: Metadata = {
   title: 'Trackr',
@@ -20,11 +21,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextAuthProvider>
-          <Layout style={{ minHeight: '100vh' }}>
-            <Header />
-            <Content className="main-wrapper">{children}</Content>
-            <Footer />
-          </Layout>
+          <ReduxProvider>
+            <Layout style={{ minHeight: '100vh' }}>
+              <Header />
+              <Content className="main-wrapper">{children}</Content>
+              <Footer />
+            </Layout>
+          </ReduxProvider>
         </NextAuthProvider>
       </body>
     </html>

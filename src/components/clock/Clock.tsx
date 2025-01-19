@@ -31,6 +31,8 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import '@/app/variables.module.scss';
 import IconButton from '../iconButton/IconButton';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { resetTrackToEdit, selectTracker } from '@/redux/slices/trackerSlice';
 import { mutate } from 'swr';
 
 if (typeof window !== 'undefined') {
@@ -38,6 +40,8 @@ if (typeof window !== 'undefined') {
 }
 
 export default function Clock(): ReactElement<void> {
+  const dispatch = useAppDispatch();
+  const { track, isEditing } = useAppSelector(selectTracker);
   const { seconds, minutes, hours, start, pause, reset, isRunning } =
     useStopwatch();
   const [open, setOpen] = useState(false);
@@ -61,14 +65,16 @@ export default function Clock(): ReactElement<void> {
     return `${hours > 0 ? h + ':' : ''}${m}:${s}`;
   }, [hours, minutes, seconds]);
 
-  useEffect(() => {
-    if (form) {
-      const formattedMinutes = minutes === 0 ? '0' : minutes;
-      form.setFieldsValue({
-        duration: `${hours}h${formattedMinutes}m`,
-      });
+  const endSubmitingOrEditing = (): void => {
+    if (isEditing && track) {
+      dispatch(resetTrackToEdit());
+      form.resetFields();
     }
-  }, [hours, minutes, form]);
+  };
+
+  const getDuration = (hours: number, minutes: number): string => {
+    return `${hours > 0 ? hours + 'h' : ''}${minutes + 'm'}`;
+  };
 
   const showForm = () => {
     setOpen(!open);
@@ -94,7 +100,9 @@ export default function Clock(): ReactElement<void> {
   };
 
   const handleDelete = (): void => {
+    endSubmitingOrEditing();
     reset(undefined, false);
+    showForm();
   };
 
   const onChangeDatetime = (
@@ -117,11 +125,11 @@ export default function Clock(): ReactElement<void> {
     const endMinutes = toMinutes(end);
     const difference = Math.abs(endMinutes - startMinutes);
     const hours = Math.floor(difference / 60);
-    const minutes = difference % 60 === 0 ? '0' : difference % 60;
+    const minutes = difference % 60 === 0 ? 0 : difference % 60;
 
     form.setFieldValue('startTime', start);
     form.setFieldValue('endTime', end);
-    form.setFieldValue('duration', `${hours}h:${minutes}m`);
+    form.setFieldValue('duration', getDuration(hours, minutes));
   };
 
   const handleSubmit = async (values: FormData) => {
@@ -129,9 +137,9 @@ export default function Clock(): ReactElement<void> {
     reset();
     pause();
     const response = await fetch('/api/track', {
-      method: 'POST',
+      method: isEditing ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
+      body: JSON.stringify({ ...values, id: track.id }),
     });
 
     const responseData = await response.json();
@@ -142,10 +150,34 @@ export default function Clock(): ReactElement<void> {
     form.resetFields();
     mutate('/api/track');
     notificationApi.success({
-      message: 'Work logged successfully',
+      message: 'Work updated successfully',
       placement: 'bottomRight',
     });
+    endSubmitingOrEditing();
   };
+
+  useEffect(() => {
+    if (form) {
+      form.setFieldsValue({
+        duration: getDuration(hours, minutes),
+      });
+    }
+  }, [hours, minutes, form]);
+
+  useEffect(() => {
+    if (track.id !== '') {
+      form.setFieldsValue({
+        id: track.id,
+        title: track.title,
+        description: track.description,
+        date: dayjs(track.date),
+        duration: track.duration,
+      });
+      if (!open) {
+        showForm();
+      }
+    }
+  }, [track]);
 
   return (
     <div style={{ position: 'relative' }}>
@@ -204,7 +236,12 @@ export default function Clock(): ReactElement<void> {
                 </Form.Item>
               </Flex>
               <Flex>
-                <Form.Item name="duration">
+                <Form.Item
+                  name="duration"
+                  rules={[
+                    { required: true, message: 'Please input duration!' },
+                  ]}
+                >
                   <Input
                     placeholder="Duration"
                     variant="filled"
@@ -217,7 +254,7 @@ export default function Clock(): ReactElement<void> {
               </Form.Item>
               <Flex gap="0.5rem" justify="flex-end">
                 <Button type="primary" htmlType="submit">
-                  Log
+                  {isEditing ? 'Edit' : 'Log'}
                 </Button>
                 <Popconfirm
                   title="Sure to delete?"
