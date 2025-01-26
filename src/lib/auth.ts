@@ -3,9 +3,9 @@ import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
-import { sql } from '@vercel/postgres';
-import bcrypt from 'bcrypt';
 import { prisma } from './prisma';
+import { cookies } from 'next/headers';
+import { login } from '@/api/authApi';
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -32,30 +32,29 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        const response = await sql`
-          SELECT * FROM "User" WHERE "email"=${credentials?.email}
-        `;
-        const user = response.rows[0];
-
-        if (!user) {
-          console.error('No user found with this email');
+        if (!credentials) {
+          console.error('Invalid password or email!');
           return null;
         }
 
-        const passwordCorrect = await bcrypt.compare(
-          credentials?.password || '',
-          user.password
-        );
-
-        if (passwordCorrect) {
-          return {
-            id: user.id,
-            email: user.email,
-          };
-        } else {
-          console.error('Invalid password');
+        const { email, password } = credentials;
+        try {
+          const response = await login({
+            email: email,
+            password: password,
+          });
+          if (response) {
+            cookies().set('access_token', response.accessToken);
+            return {
+              id: response.accessToken,
+              email: credentials?.email,
+            };
+          }
+        } catch (error) {
+          console.error('Login failed', error);
           return null;
         }
+        return null;
       },
     }),
   ],

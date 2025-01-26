@@ -1,12 +1,12 @@
 'use client';
 
+import { TrackEntity } from '@/api/generated-api';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   selectTracker,
   setIsEditing,
   setTrackToEdit,
 } from '@/redux/slices/trackerSlice';
-import { Track } from '@/types';
 import { Flex, notification, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
@@ -15,13 +15,13 @@ import { mutate } from 'swr';
 export default function TrackTable({
   data,
 }: {
-  data?: Track[];
-}): ReactElement<Track[]> {
+  data?: TrackEntity[];
+}): ReactElement<TrackEntity[]> {
   const dispatch = useAppDispatch();
   const { isEditing } = useAppSelector(selectTracker);
   const [notificationApi, contextHolder] = notification.useNotification();
 
-  const edit = (record: Partial<Track> & { id: string }) => {
+  const edit = (record: Partial<TrackEntity> & { id: string }) => {
     dispatch(setIsEditing(true));
     dispatch(
       setTrackToEdit({
@@ -65,7 +65,7 @@ export default function TrackTable({
       key: 'date',
       width: '15%',
       editable: true,
-      render: (_: unknown, record: Track) => {
+      render: (_: unknown, record: TrackEntity) => {
         return <span>{dayjs(record.date).format('DD.MM.YYYY')}</span>;
       },
     },
@@ -87,7 +87,7 @@ export default function TrackTable({
       title: 'Action',
       dataIndex: 'action',
       width: '20%',
-      render: (_: unknown, record: Track) => {
+      render: (_: unknown, record: TrackEntity) => {
         return (
           <Flex justify="space-around">
             <Typography.Link disabled={isEditing} onClick={() => edit(record)}>
@@ -107,7 +107,7 @@ export default function TrackTable({
 
   return (
     <>
-      <Table<Track>
+      <Table<TrackEntity>
         rowKey={(record) => record.id}
         bordered
         dataSource={data}
