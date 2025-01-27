@@ -1,5 +1,3 @@
-'use server';
-
 import { Configuration } from './generated-api';
 import { cookies } from 'next/headers';
 

@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id       String  @id @default(cuid())
+  email    String  @unique
+  password String?
+  name     String?
+  tracks   Track[]
+}
+
+model Track {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime @default(now()) @db.Timestamp(6)
+  startTime   String?
+  endTime     String?
+  duration    String
+  description String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
