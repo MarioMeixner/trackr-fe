@@ -4,22 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prisma": "prisma studio",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "postinstall": "prisma generate && prisma migrate deploy"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "generate:types": "npx @openapitools/openapi-generator-cli generate -i ./swagger.json -g typescript-fetch -o ./src/api/generated-api -v"
   },
   "dependencies": {
     "@ant-design/charts": "^2.2.1",
     "@ant-design/icons": "^5.5.1",
     "@gsap/react": "^2.1.1",
     "@hookform/resolvers": "^3.10.0",
-    "@prisma/client": "6.2.0",
+    "@prisma/client": "^6.2.1",
     "@reduxjs/toolkit": "^2.5.0",
     "@vercel/postgres": "^0.10.0",
     "antd": "^5.21.2",
@@ -29,6 +25,7 @@
     "gsap": "^3.12.5",
     "next": "14.2.22",
     "next-auth": "^4.24.11",
+    "prisma": "^6.2.1",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.54.2",
@@ -41,6 +38,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
+    "@openapitools/openapi-generator-cli": "^2.16.2",
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -50,7 +48,6 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "prettier": "^3.4.2",
-    "prisma": "^6.2.0",
     "sass": "^1.83.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
