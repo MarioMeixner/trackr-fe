@@ -11,6 +11,7 @@ import Text from 'antd/es/typography/Text';
 import { FormEnum } from '@/constants';
 import { z } from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
+import './loginForm.scss';
 
 const registerSchema = z.object({
   email: z.string().email({ message: 'Invalid email address!' }),
@@ -75,12 +76,9 @@ export default function LoginForm(): ReactElement<void> {
             Sign in with Github
           </Button>
         </Flex>
-        <Text
-          type="secondary"
-          style={{ textAlign: 'center', margin: '0.5rem 0' }}
-        >
-          Or
-        </Text>
+        <div className="or-line">
+          <Text type="secondary">Or</Text>
+        </div>
         <Form
           name="basic"
           onFinish={onFinish}

@@ -8,7 +8,7 @@ export const apiConfig = () => {
     throw new Error('Access token not available');
   }
   return new Configuration({
-    basePath: process.env.NEXT_PUBLIC_API_URL,
+    basePath: process.env.TRACKR_API_URL,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -18,7 +18,7 @@ export const apiConfig = () => {
 
 export const unauthorizedApiConfig = () => {
   return new Configuration({
-    basePath: process.env.NEXT_PUBLIC_API_URL,
+    basePath: process.env.TRACKR_API_URL,
     middleware: [],
   });
 };
