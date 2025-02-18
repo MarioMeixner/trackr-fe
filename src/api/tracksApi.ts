@@ -1,22 +1,38 @@
 'use server';
 
-import { apiConfig } from './configuration';
-import { TracksApi } from './generated-api/apis';
-import { TrackEntity } from './generated-api/models';
+import type { components } from '@/lib/api';
+import { client } from './clientBase';
+import { getApiHeaders } from './apiHeaders';
 
-const tracksApi = new TracksApi(apiConfig());
-
-const fetchTracks = async (): Promise<Array<TrackEntity>> => {
+const fetchTracks = async (): Promise<
+  Array<components['schemas']['TrackEntity']> | undefined
+> => {
   try {
-    const data = await tracksApi.tracksControllerFindAll();
+    const headers = await getApiHeaders();
+    const { data } = await client.GET('/tracks', { headers });
     return data;
   } catch (error) {
     console.error(error);
-    return [];
   }
 };
-const fetchTrack = async (id: string): Promise<TrackEntity> => {
-  return await tracksApi.tracksControllerFindOne({ id });
+
+const fetchTrack = async (
+  id: string
+): Promise<components['schemas']['TrackEntity'] | undefined> => {
+  try {
+    const headers = await getApiHeaders();
+    const { data } = await client.GET('/tracks/{id}', {
+      headers,
+      params: {
+        path: {
+          id,
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 export { fetchTracks, fetchTrack };

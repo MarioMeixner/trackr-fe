@@ -62,3 +62,60 @@ export type FormData = {
   title: string;
   description: string;
 };
+
+export interface TrackEntity {
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  id: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  title: string;
+  /**
+   *
+   * @type {Date}
+   * @memberof TrackEntity
+   */
+  date: Date;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  startTime?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  endTime?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  duration: string;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  description?: string | null;
+  /**
+   *
+   * @type {UserEntity}
+   * @memberof TrackEntity
+   */
+  author: UserEntity;
+  /**
+   *
+   * @type {string}
+   * @memberof TrackEntity
+   */
+  authorId: string;
+}

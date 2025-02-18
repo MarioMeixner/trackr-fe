@@ -13,6 +13,7 @@ import {
   DownOutlined,
   RollbackOutlined,
 } from '@ant-design/icons';
+import { logout } from '@/api/authApi';
 
 export default function Header(): ReactElement<void> {
   const { data: session } = useSession();
@@ -21,6 +22,11 @@ export default function Header(): ReactElement<void> {
 
   const handleTimerClick: MenuProps['onClick'] = () => {
     router.push('/timer');
+  };
+
+  const handleSignOut = async () => {
+    await logout();
+    await signOut();
   };
 
   const items: MenuProps['items'] = [
@@ -34,7 +40,7 @@ export default function Header(): ReactElement<void> {
       key: '2',
       label: 'Sign out',
       icon: <RollbackOutlined />,
-      onClick: signOut as MenuProps['onClick'],
+      onClick: handleSignOut as MenuProps['onClick'],
     },
   ];
 
@@ -58,7 +64,7 @@ export default function Header(): ReactElement<void> {
         <Button
           variant="link"
           color="default"
-          onClick={() => router.push('/login')}
+          onClick={() => router.push('/auth')}
         >
           Sign in
         </Button>

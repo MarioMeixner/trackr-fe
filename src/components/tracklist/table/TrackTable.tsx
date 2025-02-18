@@ -1,6 +1,6 @@
 'use client';
 
-import { TrackEntity } from '@/api/generated-api';
+import { components } from '@/lib/api';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
   selectTracker,
@@ -11,6 +11,8 @@ import { Flex, notification, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
 import { mutate } from 'swr';
+
+type TrackEntity = components['schemas']['TrackEntity'];
 
 export default function TrackTable({
   data,
@@ -26,10 +28,10 @@ export default function TrackTable({
     dispatch(
       setTrackToEdit({
         id: record.id,
-        date: record.date || undefined,
+        date: record.date ? new Date(record.date) : undefined,
         duration: record.duration || '',
         title: record.title || '',
-        description: record.description || '',
+        description: (record.description || '') as string,
       })
     );
   };

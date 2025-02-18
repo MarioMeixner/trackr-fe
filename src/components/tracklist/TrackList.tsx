@@ -3,12 +3,12 @@
 import { ReactElement } from 'react';
 import TicketTable from './table/TrackTable';
 import { Flex } from 'antd';
-import { TrackEntity } from '@/api/generated-api';
+import { components } from '@/lib/api';
 
 export default function TrackList({
   data,
 }: {
-  data: TrackEntity[];
+  data?: Array<components['schemas']['TrackEntity']>;
 }): ReactElement {
   // if (getTracksLoading) {
   //   return <Spin indicator={<LoadingOutlined spin />} />;

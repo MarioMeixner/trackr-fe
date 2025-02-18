@@ -4,8 +4,9 @@ import GithubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
 import { prisma } from './prisma';
+import { login, refreshToken } from '@/api/authApi';
+import { jwtDecode } from 'jwt-decode';
 import { cookies } from 'next/headers';
-import { login } from '@/api/authApi';
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -44,7 +45,6 @@ export const authOptions: NextAuthOptions = {
             password: password,
           });
           if (response) {
-            cookies().set('access_token', response.accessToken);
             return {
               id: response.accessToken,
               email: credentials?.email,
@@ -82,6 +82,16 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async jwt({ token, user }) {
+      const accessToken = cookies().get('access_token')?.value as string;
+      const decodedAccessToken = jwtDecode(accessToken);
+
+      if (
+        decodedAccessToken?.exp &&
+        Math.floor(Date.now() / 1000) >= decodedAccessToken.exp
+      ) {
+        await refreshToken();
+      }
+
       return {
         ...token,
         ...user,

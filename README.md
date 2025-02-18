@@ -37,4 +37,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Download swagger.json from localhost:3001/api-json
 
-npx @openapitools/openapi-generator-cli generate -i ./swagger.json -g typescript-fetch -o ./src/api/generated-api
+<!-- npx @openapitools/openapi-generator-cli generate -i ./swagger.json -g typescript-fetch -o ./src/api/generated-api -->
+
+npx openapi-typescript ./swagger.json -o ./src/lib/api.d.ts
