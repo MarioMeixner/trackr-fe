@@ -118,7 +118,7 @@ export default function Clock(): ReactElement<void> {
 
     const toMinutes = (time: string) => {
       const [hours, minutes] = time.split(':').map(Number);
-      return hours * 60 + minutes;
+      return (hours ?? 0) * 60 + (minutes ?? 0);
     };
 
     const startMinutes = toMinutes(start);
