@@ -7,6 +7,7 @@ import { FormEnum } from '@/constants';
 import { signIn } from 'next-auth/react';
 import { z } from 'zod';
 import { createSchemaFieldRule } from 'antd-zod';
+import { register } from '@/api/authApi';
 
 const registerSchema = z
   .object({
@@ -43,15 +44,10 @@ export default function RegisterForm(): ReactElement<void> {
     const fullname = name + ' ' + surname;
     setIsSigning(true);
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fullname, email, password }),
-      });
+      const response = await register({ email, name: fullname, password });
 
-      if (res?.ok) {
+      if (response) {
+        console.log(response.user);
         const res = await signIn('credentials', {
           redirect: false,
           email: values.email,
@@ -59,9 +55,12 @@ export default function RegisterForm(): ReactElement<void> {
         });
         if (!res?.error) {
           push('/');
+          if (invalidCredentials) {
+            setInvalidCredentials(false);
+          }
+        } else {
+          setInvalidCredentials(true);
         }
-      } else {
-        setInvalidCredentials(true);
       }
     } catch (error: unknown) {
       console.error(error as string);

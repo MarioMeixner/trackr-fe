@@ -1,13 +1,7 @@
 'use client';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, {
-  ReactElement,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useEffect, useMemo, useRef } from 'react';
 import {
   Button,
   DatePicker,
@@ -21,7 +15,6 @@ import {
 } from 'antd';
 import { useStopwatch } from 'react-timer-hook';
 import {
-  CaretDownOutlined,
   ClockCircleOutlined,
   PauseCircleOutlined,
   PlayCircleOutlined,
@@ -29,25 +22,27 @@ import {
 import dayjs from 'dayjs';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import '@/app/variables.module.scss';
-import IconButton from '../iconButton/IconButton';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { resetTrackToEdit, selectTracker } from '@/redux/slices/trackerSlice';
 import { mutate } from 'swr';
+import { createTrack, updateTrack } from '@/api/tracksApi';
+import { serializeTrack } from '@/utils/serializer';
+import { FormData } from '@/types';
+import '@/app/variables.module.scss';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(useGSAP);
 }
+
+const isClient = () => typeof window !== 'undefined';
 
 export default function Clock(): ReactElement<void> {
   const dispatch = useAppDispatch();
   const { track, isEditing } = useAppSelector(selectTracker);
   const { seconds, minutes, hours, start, pause, reset, isRunning } =
     useStopwatch();
-  const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [notificationApi, contextHolder] = notification.useNotification();
-  const sectionRef = useRef<HTMLElement | any>(undefined);
   const clock = useRef<HTMLElement | any>(undefined);
 
   useGSAP(() => {
@@ -62,7 +57,11 @@ export default function Clock(): ReactElement<void> {
     const h = hours > 9 ? hours : '0' + hours;
     const m = minutes > 9 ? minutes : '0' + minutes;
     const s = seconds > 9 ? seconds : '0' + seconds;
-    return `${hours > 0 ? h + ':' : ''}${m}:${s}`;
+    const time = `${hours > 0 ? h + ':' : ''}${m}:${s}`;
+    if (isClient() && (hours > 0 || minutes > 0 || seconds > 0)) {
+      document.title = `Trackr - ${time}`;
+    }
+    return time;
   }, [hours, minutes, seconds]);
 
   const endSubmitingOrEditing = (): void => {
@@ -76,33 +75,9 @@ export default function Clock(): ReactElement<void> {
     return `${hours > 0 ? hours + 'h' : ''}${minutes + 'm'}`;
   };
 
-  const showForm = () => {
-    setOpen(!open);
-    if (open) {
-      gsap.to(sectionRef.current, {
-        height: 0,
-        overflow: 'hidden',
-        opacity: 0,
-        duration: 0.5,
-        padding: 0,
-      });
-    } else {
-      const sectionHeight = sectionRef.current.scrollHeight;
-      gsap.to(sectionRef.current, {
-        height: sectionHeight,
-        overflow: 'visible',
-        opacity: 1,
-        duration: 0.5,
-        padding: '10px 20px',
-      });
-    }
-    gsap.to('.icon-button', { rotation: '+=180', duration: 0.3 });
-  };
-
   const handleDelete = (): void => {
     endSubmitingOrEditing();
     reset(undefined, false);
-    showForm();
   };
 
   const onChangeDatetime = (
@@ -133,19 +108,13 @@ export default function Clock(): ReactElement<void> {
   };
 
   const handleSubmit = async (values: FormData) => {
-    showForm();
     reset();
     pause();
-    const response = await fetch('/api/track', {
-      method: isEditing ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...values, id: track.id }),
-    });
-
-    const responseData = await response.json();
-
-    if (!response.ok) {
-      throw new Error(responseData.message || 'Failed to create todo');
+    const newTrack = serializeTrack(values);
+    if (isEditing) {
+      await updateTrack(track.id, newTrack);
+    } else {
+      await createTrack(newTrack);
     }
     form.resetFields();
     mutate('/api/track');
@@ -173,9 +142,6 @@ export default function Clock(): ReactElement<void> {
         date: dayjs(track.date),
         duration: track.duration,
       });
-      if (!open) {
-        showForm();
-      }
     }
   }, [track]);
 
@@ -188,14 +154,31 @@ export default function Clock(): ReactElement<void> {
         </div>
         <Flex vertical gap="1rem">
           <Flex gap="1rem" justify="center">
-            <IconButton onClick={showForm}>
-              <CaretDownOutlined />
-            </IconButton>
+            <div>
+              {isRunning ? (
+                <Tooltip title="pause">
+                  <Button
+                    onClick={pause}
+                    type="primary"
+                    shape="circle"
+                    icon={<PauseCircleOutlined />}
+                    size="large"
+                  />
+                </Tooltip>
+              ) : (
+                <Tooltip title="play">
+                  <Button
+                    onClick={start}
+                    type="primary"
+                    shape="circle"
+                    icon={<PlayCircleOutlined />}
+                    size="large"
+                  />
+                </Tooltip>
+              )}
+            </div>
           </Flex>
-          <Flex
-            ref={sectionRef}
-            style={{ height: 0, overflow: 'hidden', opacity: 0 }}
-          >
+          <Flex>
             <Form
               form={form}
               initialValues={{ date: dayjs() }}
@@ -252,7 +235,7 @@ export default function Clock(): ReactElement<void> {
               <Form.Item name="description">
                 <Input placeholder="Description of issue" variant="filled" />
               </Form.Item>
-              <Flex gap="0.5rem" justify="flex-end">
+              <Flex gap="0.5rem" justify="center">
                 <Button type="primary" htmlType="submit">
                   {isEditing ? 'Edit' : 'Log'}
                 </Button>
@@ -267,29 +250,6 @@ export default function Clock(): ReactElement<void> {
           </Flex>
         </Flex>
       </Flex>
-      <div style={{ position: 'absolute', right: -20, top: 45 }}>
-        {isRunning ? (
-          <Tooltip title="pause">
-            <Button
-              onClick={pause}
-              type="primary"
-              shape="circle"
-              icon={<PauseCircleOutlined />}
-              size="large"
-            />
-          </Tooltip>
-        ) : (
-          <Tooltip title="play">
-            <Button
-              onClick={start}
-              type="primary"
-              shape="circle"
-              icon={<PlayCircleOutlined />}
-              size="large"
-            />
-          </Tooltip>
-        )}
-      </div>
     </div>
   );
 }

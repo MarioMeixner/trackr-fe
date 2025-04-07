@@ -2,9 +2,23 @@
 
 import { cookies } from 'next/headers';
 
-export const getApiHeaders = async (extraHeaders?: Record<string, string>) => {
+export const getApiHeaders = async ({
+  tags = [],
+  revalidate = 3600,
+  extraHeaders,
+}: {
+  tags?: string[];
+  revalidate?: number;
+  extraHeaders?: Record<string, string>;
+}) => {
   return {
-    Cookie: cookies().toString(),
-    ...extraHeaders,
+    headers: {
+      Cookie: cookies().toString(),
+      ...extraHeaders,
+    },
+    next: {
+      revalidate,
+      tags,
+    },
   };
 };

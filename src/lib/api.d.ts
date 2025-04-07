@@ -100,6 +100,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/auth/register': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AuthController_register'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/auth/refresh': {
     parameters: {
       query?: never;
@@ -140,7 +156,7 @@ export interface components {
       title: string;
       /**
        * Format: date-time
-       * @default 2025-02-18T22:44:40.674Z
+       * @default 2025-02-26T19:14:13.058Z
        */
       date: string;
       startTime?: string;
@@ -153,6 +169,7 @@ export interface components {
       email: string;
       id: string;
       name?: Record<string, never> | null;
+      password: string;
     };
     TrackEntity: {
       id: string;
@@ -170,7 +187,7 @@ export interface components {
       title?: string;
       /**
        * Format: date-time
-       * @default 2025-02-18T22:44:40.674Z
+       * @default 2025-02-26T19:14:13.058Z
        */
       date: string;
       startTime?: string;
@@ -197,6 +214,11 @@ export interface components {
       accessToken: string;
       refreshToken: string;
       user: Record<string, never>;
+    };
+    RegisterDto: {
+      name: string;
+      email: string;
+      password: string;
     };
   };
   responses: never;
@@ -452,6 +474,29 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': components['schemas']['LoginDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthEntity'];
+        };
+      };
+    };
+  };
+  AuthController_register: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RegisterDto'];
       };
     };
     responses: {

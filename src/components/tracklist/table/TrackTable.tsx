@@ -1,5 +1,6 @@
 'use client';
 
+import { deleteTrack } from '@/api/tracksApi';
 import { components } from '@/lib/api';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import {
@@ -10,7 +11,6 @@ import {
 import { Flex, notification, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
-import { mutate } from 'swr';
 
 type TrackEntity = components['schemas']['TrackEntity'];
 
@@ -37,19 +37,8 @@ export default function TrackTable({
   };
 
   const handleDelete = async (id: string) => {
-    const res = await fetch('/api/track', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ id }),
-    });
+    await deleteTrack(id);
 
-    if (!res.ok) {
-      throw new Error('Failed to delete track');
-    }
-
-    mutate('/api/track');
     notificationApi.success({
       message: 'Track deleted successfully',
       placement: 'bottomRight',
@@ -117,6 +106,7 @@ export default function TrackTable({
         rowClassName="editable-row"
         pagination={{ onChange: cancel }}
         style={{ width: '60rem' }}
+        size="middle"
       />
       {contextHolder}
     </>

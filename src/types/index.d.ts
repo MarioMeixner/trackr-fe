@@ -42,12 +42,6 @@ export type DataType = {
   time: number;
 };
 
-export type Issue = {
-  title: string;
-  date: string;
-  time: string;
-};
-
 export type Track = {
   id: string;
   title: string;
