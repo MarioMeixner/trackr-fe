@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { ReactElement } from 'react';
 import Clock from '@/components/clock/Clock';
 import { Col, Row } from 'antd';
