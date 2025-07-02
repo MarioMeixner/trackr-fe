@@ -8,6 +8,7 @@ import {
   setIsEditing,
   setTrackToEdit,
 } from '@/redux/slices/trackerSlice';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Flex, notification, Table, Typography } from 'antd';
 import dayjs from 'dayjs';
 import { ReactElement } from 'react';
@@ -82,13 +83,13 @@ export default function TrackTable({
         return (
           <Flex justify="space-around">
             <Typography.Link disabled={isEditing} onClick={() => edit(record)}>
-              Edit
+              <EditOutlined />
             </Typography.Link>
             <Typography.Link
               onClick={() => handleDelete(record.id)}
               type="danger"
             >
-              Delete
+              <DeleteOutlined />
             </Typography.Link>
           </Flex>
         );

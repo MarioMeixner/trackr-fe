@@ -149,7 +149,16 @@ export default function Clock(): ReactElement<void> {
     <div style={{ position: 'relative' }}>
       {contextHolder}
       <Flex align="center" vertical gap="0.5rem">
-        <div style={{ fontSize: '100px' }} ref={clock}>
+        <div
+          style={{
+            fontSize: '100px',
+            fontVariantNumeric: 'tabular-nums',
+            backgroundColor: '#64FF00',
+            borderRadius: '16px',
+            padding: '0 8px',
+          }}
+          ref={clock}
+        >
           {formatedTime}
         </div>
         <Flex vertical gap="1rem">

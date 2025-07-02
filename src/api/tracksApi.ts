@@ -26,8 +26,13 @@ const createTrack = async (
 
 const fetchTracks = async (): Promise<Array<TrackEntity> | undefined> => {
   try {
+    const userId = await getUsersId();
     const { headers, next } = await getApiHeaders({ tags: ['tracks'] });
-    const { data } = await client.GET('/tracks', { headers, next });
+    const { data } = await client.GET('/tracks', {
+      headers,
+      next,
+      data: { id: userId },
+    });
     return data;
   } catch (error) {
     console.error(error);

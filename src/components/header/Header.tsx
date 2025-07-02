@@ -9,6 +9,7 @@ import logo from '@/assets/logo.svg';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+  BarChartOutlined,
   ClockCircleOutlined,
   DownOutlined,
   RollbackOutlined,
@@ -24,6 +25,10 @@ export default function Header(): ReactElement<void> {
     router.push('/timer');
   };
 
+  const handleEmployeesClick: MenuProps['onClick'] = () => {
+    router.push('/employees');
+  };
+
   const handleSignOut = async () => {
     await logout();
     await signOut();
@@ -31,13 +36,19 @@ export default function Header(): ReactElement<void> {
 
   const items: MenuProps['items'] = [
     {
-      key: '1',
+      key: 'timer',
       label: 'Timer',
       icon: <ClockCircleOutlined />,
       onClick: handleTimerClick,
     },
     {
-      key: '2',
+      key: 'employees',
+      label: 'Employees',
+      icon: <BarChartOutlined />,
+      onClick: handleEmployeesClick,
+    },
+    {
+      key: 'signout',
       label: 'Sign out',
       icon: <RollbackOutlined />,
       onClick: handleSignOut as MenuProps['onClick'],
@@ -57,7 +68,7 @@ export default function Header(): ReactElement<void> {
         backgroundColor: '#fff',
       }}
     >
-      <Link style={{ display: 'flex', alignItems: 'center' }} href="/">
+      <Link style={{ display: 'flex', alignItems: 'center' }} href="/dashboard">
         <Image src={logo} alt="trackr" width="100" />
       </Link>
       {pathname !== '/auth' && !session ? (

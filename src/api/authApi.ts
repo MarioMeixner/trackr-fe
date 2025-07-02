@@ -28,6 +28,24 @@ const login = async ({
   return data;
 };
 
+const verifyUser = async ({
+  email,
+  name,
+}: {
+  email: string;
+  name?: string;
+}): Promise<AuthEntity | undefined> => {
+  const { data } = await client.POST('/auth/verify', {
+    body: { email, name: name || '' },
+  });
+  if (data?.accessToken && data?.refreshToken) {
+    const cookieStore = cookies();
+    cookieStore.set('access_token', data.accessToken, { httpOnly: true });
+    cookieStore.set('refresh_token', data.refreshToken, { httpOnly: true });
+  }
+  return data;
+};
+
 const refreshToken = async (): Promise<AuthEntity | undefined> => {
   const { headers } = await getApiHeaders({});
   const { data } = await client.POST('/auth/refresh', { headers });
@@ -66,4 +84,4 @@ const register = async ({
   return data;
 };
 
-export { login, refreshToken, logout, register };
+export { login, verifyUser, refreshToken, logout, register };

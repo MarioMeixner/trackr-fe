@@ -20,5 +20,6 @@ export const config = {
     '/protected-route/:path*',
     '/dashboard/:path*',
     '/timer/:path*',
+    '/employees/:path*',
   ],
 };

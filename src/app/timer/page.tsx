@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { ReactElement } from 'react';
 import Clock from '@/components/clock/Clock';
 import { Col, Row } from 'antd';
-import TrackList from '@/components/tracklist/TrackList';
+import TrackList from '@/components/trackList/TrackList';
 import { fetchTracks } from '@/api/tracksApi';
 
 export default async function Timer(): Promise<ReactElement> {

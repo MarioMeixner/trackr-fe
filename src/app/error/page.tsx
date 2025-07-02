@@ -12,7 +12,7 @@ export default function Error(): ReactElement {
       title="500"
       subTitle="Sorry, something went wrong."
       extra={
-        <Button onClick={() => push('/')} type="primary">
+        <Button onClick={() => push('/dashboard')} type="primary">
           Back Home
         </Button>
       }

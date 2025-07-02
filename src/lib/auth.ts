@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import GithubProvider from 'next-auth/providers/github';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { JWT } from 'next-auth/jwt';
-import { login, refreshToken } from '@/api/authApi';
+import { login, refreshToken, verifyUser } from '@/api/authApi';
 import { jwtDecode } from 'jwt-decode';
 import { cookies } from 'next/headers';
 
@@ -58,26 +58,20 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn() {
-      // if (account?.provider === 'google' || account?.provider === 'github') {
-      //   try {
-      //     const existingUser = await prisma.user.findUnique({
-      //       where: { email: profile?.email },
-      //     });
-
-      //     if (!existingUser) {
-      //       await prisma.user.create({
-      //         data: {
-      //           email: profile?.email as string,
-      //           name: profile?.name ?? '',
-      //         },
-      //       });
-      //     }
-      //   } catch (error) {
-      //     console.error('Error in signIn callback:', error);
-      //     return true;
-      //   }
-      // }
+    async signIn({ account, profile }) {
+      if (account?.provider === 'google' || account?.provider === 'github') {
+        try {
+          if (profile?.email) {
+            await verifyUser({
+              email: profile.email,
+              name: profile.name,
+            });
+          }
+        } catch (error) {
+          console.error('Error in signIn callback:', error);
+          return true;
+        }
+      }
       return true;
     },
     async jwt({ token, user }) {

@@ -47,14 +47,13 @@ export default function RegisterForm(): ReactElement<void> {
       const response = await register({ email, name: fullname, password });
 
       if (response) {
-        console.log(response.user);
         const res = await signIn('credentials', {
           redirect: false,
           email: values.email,
           password: values.password,
         });
         if (!res?.error) {
-          push('/');
+          push('/timer');
           if (invalidCredentials) {
             setInvalidCredentials(false);
           }

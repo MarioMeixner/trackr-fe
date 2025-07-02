@@ -24,7 +24,7 @@ export default function LoginForm(): ReactElement<void> {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { push } = useRouter();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl') || '/timer';
   const [invalidCredentials, setInvalidCredentials] = useState(false);
   const [isLogging, setIsLogging] = useState(false);
 

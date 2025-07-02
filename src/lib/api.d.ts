@@ -36,6 +36,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/tracks/user/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['TracksController_findAllByUserId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/tracks/{id}': {
     parameters: {
       query?: never;
@@ -116,6 +132,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/auth/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AuthController_verify'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/auth/refresh': {
     parameters: {
       query?: never;
@@ -156,7 +188,7 @@ export interface components {
       title: string;
       /**
        * Format: date-time
-       * @default 2025-02-26T19:14:13.058Z
+       * @default 2025-06-17T17:08:01.559Z
        */
       date: string;
       startTime?: string;
@@ -169,7 +201,6 @@ export interface components {
       email: string;
       id: string;
       name?: Record<string, never> | null;
-      password: string;
     };
     TrackEntity: {
       id: string;
@@ -187,7 +218,7 @@ export interface components {
       title?: string;
       /**
        * Format: date-time
-       * @default 2025-02-26T19:14:13.058Z
+       * @default 2025-06-17T17:08:01.559Z
        */
       date: string;
       startTime?: string;
@@ -219,6 +250,10 @@ export interface components {
       name: string;
       email: string;
       password: string;
+    };
+    NextProviderLoginDto: {
+      email: string;
+      name: string;
     };
   };
   responses: never;
@@ -284,6 +319,27 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['TrackEntity'];
+        };
+      };
+    };
+  };
+  TracksController_findAllByUserId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TrackEntity'][];
         };
       };
     };
@@ -497,6 +553,29 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': components['schemas']['RegisterDto'];
+      };
+    };
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuthEntity'];
+        };
+      };
+    };
+  };
+  AuthController_verify: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NextProviderLoginDto'];
       };
     };
     responses: {

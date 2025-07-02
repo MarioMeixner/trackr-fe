@@ -12,7 +12,7 @@ export default function NotFound(): ReactElement {
       title="404"
       subTitle="Sorry, the page you visited does not exist."
       extra={
-        <Button onClick={() => push('/')} type="primary">
+        <Button onClick={() => push('/dashboard')} type="primary">
           Back Home
         </Button>
       }

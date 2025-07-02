@@ -28,7 +28,7 @@ export default function Auth({
             reporting tool, designed specifically for developers. Stay on top of
             your tasks, optimize your workflow, and make every second count!
           </Text>
-          <Link href="/">Learn more</Link>
+          <Link href="/dashboard">Learn more</Link>
         </Flex>
         <Flex gap={12} vertical>
           <Title level={4}>{isSignup ? 'Register' : 'Sign in'}</Title>
